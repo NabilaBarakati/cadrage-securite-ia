@@ -15,6 +15,12 @@ _KPI_CSS = """
     border-radius: 14px;
     padding: 1.2rem 1rem;
     box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    transition: box-shadow 0.15s ease, border-color 0.15s ease;
+    cursor: pointer;
+}
+[data-testid="stMetric"]:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    border-color: #94a3b8;
 }
 [data-testid="stMetricLabel"] {
     font-size: 0.82rem !important;
@@ -25,6 +31,19 @@ _KPI_CSS = """
     font-size: 2rem !important;
     font-weight: 700 !important;
     color: #1e293b !important;
+}
+/* Clickable project cards */
+div[data-testid="stVerticalBlock"] div[data-testid="stHorizontalBlock"] button[kind="secondary"] {
+    transition: all 0.15s ease;
+}
+/* Full-card clickable style */
+.card-btn > button {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    text-align: left !important;
+    width: 100% !important;
+    cursor: pointer !important;
 }
 </style>
 """
@@ -231,7 +250,17 @@ def _render_sidebar() -> None:
                 badge = "▶️"
             else:
                 badge = "🔒"
-            st.caption(f"{badge} {s['icon']} {s['short_title']}")
+            active = st.session_state.get("active_step") == n
+            btn_style = "primary" if active else "secondary"
+            if st.button(
+                f"{badge} {s['icon']} {s['short_title']}",
+                key=f"sidebar_step_{n}",
+                use_container_width=True,
+                type=btn_style,
+                disabled=not is_unlocked,
+            ):
+                st.session_state.active_step = n
+                st.rerun()
 
         st.divider()
 
@@ -269,6 +298,14 @@ def _render_project_row(session: dict) -> None:
     else:
         step_label = "Étape 1 — À démarrer"
 
+    _card_css = """
+    <style>
+    div[data-testid="stButton"] button[data-testid="baseButton-secondary"].card-project-btn {
+        background: transparent; border: none; padding: 0; width: 100%;
+    }
+    </style>
+    """
+
     with st.container(border=True):
         c1, c2, c3, c4 = st.columns([3, 2, 1, 1])
         with c1:
@@ -278,8 +315,8 @@ def _render_project_row(session: dict) -> None:
         with c3:
             st.markdown(f'<span style="{style}">{label}</span>', unsafe_allow_html=True)
         with c4:
-            btn_label = "Voir →" if is_viewer else "Ouvrir →"
-            if st.button(btn_label, key=f"dash_open_{session['id']}", use_container_width=True):
+            btn_label = "👁 Voir" if is_viewer else "📂 Ouvrir"
+            if st.button(btn_label, key=f"dash_open_{session['id']}", use_container_width=True, type="primary"):
                 st.session_state.session = db_manager.get_session(session["id"])
                 st.rerun()
 
@@ -312,10 +349,20 @@ def _render_home_dashboard() -> None:
         }
 
     c1, c2, c3, c4 = st.columns(4)
-    c1.metric("🔵 Projets en cours", d["in_progress"])
-    c2.metric("✅ Projets terminés", d["completed"])
-    c3.metric("⚠️ Risques identifiés", d["risks"])
-    c4.metric("📋 Exigences générées", d["requirements"])
+    with c1:
+        st.metric("🔵 Projets en cours", d["in_progress"])
+        if not demo_mode and st.button("Voir les projets →", key="kpi_inprogress", use_container_width=True):
+            st.session_state.current_page = "projects"
+            st.rerun()
+    with c2:
+        st.metric("✅ Projets terminés", d["completed"])
+        if not demo_mode and st.button("Voir les projets →", key="kpi_completed", use_container_width=True):
+            st.session_state.current_page = "projects"
+            st.rerun()
+    with c3:
+        st.metric("⚠️ Risques identifiés", d["risks"])
+    with c4:
+        st.metric("📋 Exigences générées", d["requirements"])
 
     st.divider()
 
@@ -659,6 +706,28 @@ def render_dashboard() -> None:
     ]
 
     tabs = st.tabs(tab_labels)
+
+    # Auto-select tab when navigating from sidebar
+    active_step = st.session_state.get("active_step")
+    if active_step:
+        tab_index = active_step - 1
+        st.markdown(
+            f"""
+            <script>
+            (function() {{
+                function clickTab() {{
+                    var btns = window.parent.document.querySelectorAll('[data-baseweb="tab"]');
+                    if (btns.length > {tab_index}) {{
+                        btns[{tab_index}].click();
+                    }}
+                }}
+                setTimeout(clickTab, 200);
+            }})();
+            </script>
+            """,
+            unsafe_allow_html=True,
+        )
+        st.session_state.pop("active_step", None)
 
     for tab, step_meta in zip(tabs, steps_meta):
         n = step_meta["number"]
