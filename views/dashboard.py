@@ -260,6 +260,7 @@ def _render_project_row(session: dict) -> None:
     steps_done = session.get("steps_done", 0)
     current_step = session.get("current_step", 0)
     label, style = _criticality(steps_done)
+    is_viewer = st.session_state.get("user", {}).get("role") == "VIEWER"
 
     if session["status"] == "COMPLETED" or current_step == 10:
         step_label = "Étape 10 — Terminé ✅"
@@ -277,7 +278,8 @@ def _render_project_row(session: dict) -> None:
         with c3:
             st.markdown(f'<span style="{style}">{label}</span>', unsafe_allow_html=True)
         with c4:
-            if st.button("Ouvrir →", key=f"dash_open_{session['id']}", use_container_width=True):
+            btn_label = "Voir →" if is_viewer else "Ouvrir →"
+            if st.button(btn_label, key=f"dash_open_{session['id']}", use_container_width=True):
                 st.session_state.session = db_manager.get_session(session["id"])
                 st.rerun()
 
@@ -413,9 +415,11 @@ def _render_project_selection() -> None:
 
     with col_list:
         st.subheader("Projets existants")
-        sessions = db_manager.get_sessions(
-            created_by=user["id"] if user["role"] == "CREATOR" else None
-        )
+        # VIEWER and ADMIN see all projects; CREATOR sees only their own.
+        if user["role"] == "CREATOR":
+            sessions = db_manager.get_sessions(created_by=user["id"])
+        else:
+            sessions = db_manager.get_sessions()
 
         if not sessions:
             msg = (
@@ -435,7 +439,8 @@ def _render_project_selection() -> None:
                     if s.get("project_desc"):
                         preview = s["project_desc"][:120]
                         st.markdown(preview + ("…" if len(s["project_desc"]) > 120 else ""))
-                    if st.button("Ouvrir →", key=f"open_{s['id']}", use_container_width=True):
+                    btn_label = "Voir →" if is_viewer else "Ouvrir →"
+                    if st.button(btn_label, key=f"open_{s['id']}", use_container_width=True):
                         st.session_state.session = s
                         st.rerun()
 
@@ -472,10 +477,12 @@ def _render_step_tab(step_meta: dict, is_unlocked: bool) -> None:
                 st.markdown("🔄 En cours")
 
         if state["response"] is None:
-            if is_viewer:
-                st.info("Aucune analyse générée pour cette étape.")
-            else:
-                st.info("Lancez la génération IA pour obtenir l'analyse de cette étape.")
+            st.info(
+                "Mode lecture — aucune analyse générée pour cette étape."
+                if is_viewer
+                else "Lancez la génération IA pour obtenir l'analyse de cette étape."
+            )
+            if not is_viewer:
                 if st.button(
                     "🚀 Générer l'analyse",
                     key=f"gen_{n}",
@@ -508,12 +515,18 @@ def _render_step_tab(step_meta: dict, is_unlocked: bool) -> None:
             with st.container(border=True):
                 st.markdown(state["response"])
 
-            if not is_validated and not is_viewer:
+            if not is_validated:
                 st.divider()
                 btn_regen, _, btn_validate = st.columns([2, 1, 3])
 
                 with btn_regen:
-                    if st.button("🔄 Régénérer", key=f"regen_{n}", use_container_width=True):
+                    if st.button(
+                        "🔄 Régénérer",
+                        key=f"regen_{n}",
+                        use_container_width=True,
+                        disabled=is_viewer,
+                        help="Accès en lecture seule" if is_viewer else None,
+                    ):
                         previous = _previous_responses(n)
                         with st.spinner("Régénération en cours…"):
                             full_response = st.write_stream(
@@ -542,6 +555,8 @@ def _render_step_tab(step_meta: dict, is_unlocked: bool) -> None:
                         key=f"validate_{n}",
                         type="primary",
                         use_container_width=True,
+                        disabled=is_viewer,
+                        help="Accès en lecture seule" if is_viewer else None,
                     ):
                         st.session_state.validated_steps.add(n)
                         if n == 10:
