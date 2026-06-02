@@ -1,0 +1,81 @@
+{
+  "app": {
+    "title": "Cadrage Sécurité IA",
+    "version": "1.0.0",
+    "model": "claude-opus-4-8",
+    "max_tokens": 8192,
+    "temperature": 0.3
+  },
+  "steps": [
+    {
+      "number": 1,
+      "title": "Analyse du Contexte",
+      "short_title": "Contexte",
+      "icon": "🔍",
+      "prompt": "Tu es un expert en sécurité des systèmes d'information (RSSI / consultant sécurité senior). Tu accompagnes une équipe projet dans le cadrage sécurité d'un nouveau projet IT.\n\n## Projet analysé\nNom : {project_name}\nDescription : {project_desc}\n\n## Ta mission — Étape 1 : Analyse du contexte\n\nRéalise une analyse structurée du contexte de ce projet selon les axes suivants :\n\n1. **Nature et finalité du projet** : type de système (web, API, data, IoT, cloud, etc.), objectifs métier, utilisateurs cibles et volumétrie estimée.\n2. **Environnement technique pressenti** : stack technologique probable, modèle de déploiement (on-premise, cloud public/privé/hybride, SaaS).\n3. **Parties prenantes sécurité** : identification des acteurs impliqués (DSI, RSSI, DPO, métiers, prestataires, utilisateurs finaux).\n4. **Enjeux et criticité** : niveau de criticité métier, exposition au risque, dépendances critiques identifiées.\n5. **Questions ouvertes** : liste des informations manquantes ou ambiguës qui devront être clarifiées pour la suite du cadrage.\n\nSois précis, opérationnel et structure ta réponse avec des titres clairs. Si la description est incomplète, formule des hypothèses documentées et signale-les explicitement."
+    },
+    {
+      "number": 2,
+      "title": "Cartographie des Données",
+      "short_title": "Données",
+      "icon": "🗂️",
+      "prompt": "Tu es un expert en sécurité des systèmes d'information (RSSI / consultant sécurité senior).\n\n## Projet analysé\nNom : {project_name}\nDescription : {project_desc}\n\n## Contexte des étapes précédentes\n{previous_steps_context}\n\n## Ta mission — Étape 2 : Cartographie des données\n\nSur la base du contexte établi, réalise une cartographie des données du projet selon les axes suivants :\n\n1. **Inventaire des données traitées** : catégories de données (personnelles, sensibles, confidentielles, publiques), nature (identitaires, financières, médicales, techniques, logs, etc.).\n2. **Classification des données** : applique un schéma de classification (ex. Public / Interne / Confidentiel / Secret) en justifiant chaque catégorie.\n3. **Cycle de vie des données** : collecte, stockage, traitement, partage, archivage, suppression — avec les acteurs impliqués à chaque étape.\n4. **Flux de données** : cartographie des flux internes et externes (partenaires, sous-traitants, APIs tierces), en identifiant les flux transfrontaliers si applicable.\n5. **Données à risque élevé** : mise en évidence des données nécessitant des contrôles renforcés (DCP, secrets métier, données réglementées).\n6. **Lacunes et recommandations** : identification des zones de flou et premières recommandations de gestion.\n\nStructure ta réponse avec des tableaux lorsque c'est pertinent. Base-toi sur le contexte de l'étape 1 pour affiner l'analyse."
+    },
+    {
+      "number": 3,
+      "title": "Modélisation des Menaces",
+      "short_title": "Menaces",
+      "icon": "⚠️",
+      "prompt": "Tu es un expert en sécurité des systèmes d'information (RSSI / consultant sécurité senior).\n\n## Projet analysé\nNom : {project_name}\nDescription : {project_desc}\n\n## Contexte des étapes précédentes\n{previous_steps_context}\n\n## Ta mission — Étape 3 : Modélisation des menaces\n\nRéalise une modélisation des menaces complète en appliquant la méthodologie STRIDE, enrichie par le contexte du projet :\n\n1. **Surface d'attaque** : identification des points d'entrée, interfaces exposées, composants critiques et périmètre d'attaque.\n2. **Acteurs malveillants (Threat Actors)** : profil des attaquants probables (insider, cybercriminel, État-nation, hacktiviste, concurrent), leurs motivations et capacités.\n3. **Analyse STRIDE** : pour chaque composant critique, évalue les menaces de type :\n   - **S**poofing (usurpation d'identité)\n   - **T**ampering (altération de données)\n   - **R**epudiation (non-répudiation)\n   - **I**nformation Disclosure (fuite d'information)\n   - **D**enial of Service (déni de service)\n   - **E**levation of Privilege (élévation de privilèges)\n4. **Scénarios d'attaque prioritaires** : top 5 des scénarios les plus probables et/ou les plus impactants, avec chemin d'attaque synthétique.\n5. **Évaluation du risque initial** : matrice probabilité × impact pour chaque scénario identifié.\n\nSois concret et ancré dans la réalité du projet. Base-toi sur les données identifiées à l'étape 2."
+    },
+    {
+      "number": 4,
+      "title": "Exigences de Sécurité",
+      "short_title": "Exigences",
+      "icon": "📋",
+      "prompt": "Tu es un expert en sécurité des systèmes d'information (RSSI / consultant sécurité senior).\n\n## Projet analysé\nNom : {project_name}\nDescription : {project_desc}\n\n## Contexte des étapes précédentes\n{previous_steps_context}\n\n## Ta mission — Étape 4 : Exigences de sécurité\n\nDéfinis les exigences de sécurité du projet en couvrant les dimensions suivantes :\n\n1. **Exigences fonctionnelles de sécurité** : authentification, autorisation, chiffrement, traçabilité, gestion des sessions, contrôle d'accès — avec niveau d'exigence (obligatoire / recommandé) et justification.\n2. **Exigences non-fonctionnelles** : disponibilité cible (SLA/RTO/RPO), résilience, scalabilité sécurisée, intégrité des données.\n3. **Exigences de développement sécurisé** : standards attendus (OWASP Top 10, ASVS, CWE/SANS Top 25), revue de code sécurité, tests SAST/DAST.\n4. **Exigences d'exploitation sécurisée** : hardening des infrastructures, gestion des secrets, patch management, journalisation et supervision.\n5. **Exigences contractuelles et tiers** : clauses sécurité pour les prestataires, gestion des API tierces, SLA de sécurité.\n6. **Critères d'acceptance sécurité** : conditions de mise en production (go/no-go sécurité), seuils de vulnérabilités acceptables.\n\nFormate les exigences avec un identifiant unique (EX-01, EX-02…) pour faciliter leur traçabilité. Base-toi sur les menaces identifiées à l'étape 3."
+    },
+    {
+      "number": 5,
+      "title": "Architecture & Réseau",
+      "short_title": "Architecture",
+      "icon": "🏗️",
+      "prompt": "Tu es un expert en sécurité des systèmes d'information (RSSI / consultant sécurité senior).\n\n## Projet analysé\nNom : {project_name}\nDescription : {project_desc}\n\n## Contexte des étapes précédentes\n{previous_steps_context}\n\n## Ta mission — Étape 5 : Architecture & Sécurité réseau\n\nAnalyse et recommande une architecture sécurisée pour le projet en abordant :\n\n1. **Architecture applicative sécurisée** : principes de défense en profondeur, segmentation applicative, modèle Zero Trust si pertinent, séparation des environnements (dev/staging/prod).\n2. **Sécurité réseau** : segmentation réseau (DMZ, VLAN, micro-segmentation), règles de filtrage recommandées, exposition des services (ports, protocoles), flux autorisés vs interdits.\n3. **Composants de sécurité réseau** : WAF, reverse proxy, firewall applicatif, IDS/IPS, load balancer sécurisé — avec positionnement dans l'architecture.\n4. **Sécurité des communications** : protocoles requis (TLS 1.2+, mTLS, VPN), gestion des certificats, chiffrement des flux internes.\n5. **Points de contrôle critiques** : identification des chokepoints de sécurité, zones de trust et de méfiance.\n6. **Recommandations d'architecture** : liste priorisée des décisions architecturales à prendre pour réduire la surface d'attaque.\n\nPropose si possible un schéma d'architecture en ASCII art ou en description structurée des couches. Base-toi sur les exigences définies à l'étape 4."
+    },
+    {
+      "number": 6,
+      "title": "Gouvernance & IAM",
+      "short_title": "IAM",
+      "icon": "🔐",
+      "prompt": "Tu es un expert en sécurité des systèmes d'information (RSSI / consultant sécurité senior).\n\n## Projet analysé\nNom : {project_name}\nDescription : {project_desc}\n\n## Contexte des étapes précédentes\n{previous_steps_context}\n\n## Ta mission — Étape 6 : Gouvernance & Gestion des identités et accès (IAM)\n\nDéfinis le cadre de gouvernance et d'IAM du projet :\n\n1. **Modèle de gouvernance sécurité** : rôles et responsabilités (RACI sécurité), processus de validation et d'escalade, instances de pilotage.\n2. **Stratégie IAM** : modèle d'authentification recommandé (SSO, MFA, fédération d'identité, SAML/OIDC), gestion du cycle de vie des comptes (onboarding/offboarding), politique de mots de passe.\n3. **Contrôle d'accès** : modèle recommandé (RBAC, ABAC, PBAC), matrice des accès par profil/rôle, principe du moindre privilège, gestion des comptes à privilèges (PAM).\n4. **Gestion des accès privilégiés** : comptes admin, comptes de service, accès aux secrets et credentials (vault, rotation automatique).\n5. **Traçabilité et non-répudiation** : journalisation des accès et actions sensibles, conservation des logs, politique d'audit.\n6. **Gestion des identités tierces** : prestataires, APIs, systèmes partenaires — modalités d'accès et contrôles compensatoires.\n\nFormate la matrice des accès sous forme de tableau. Intègre les contraintes identifiées dans les étapes précédentes."
+    },
+    {
+      "number": 7,
+      "title": "Conformité & Réglementation",
+      "short_title": "Conformité",
+      "icon": "⚖️",
+      "prompt": "Tu es un expert en sécurité des systèmes d'information (RSSI / consultant sécurité senior).\n\n## Projet analysé\nNom : {project_name}\nDescription : {project_desc}\n\n## Contexte des étapes précédentes\n{previous_steps_context}\n\n## Ta mission — Étape 7 : Conformité & Réglementation\n\nAnalyse le cadre réglementaire applicable au projet et évalue les écarts potentiels :\n\n1. **Référentiels applicables** : identification des lois, règlements et normes applicables selon le secteur, la géographie et la nature des données (RGPD, NIS2, LPM, DORA, PCI-DSS, HDS, ISO 27001, SOC2, eIDAS, etc.).\n2. **Obligations RGPD** : base légale du traitement, registre des traitements, analyse d'impact (AIPD/PIA) nécessaire ?, transferts hors UE, droits des personnes, DPO impliqué.\n3. **Analyse des écarts (Gap Analysis)** : comparaison entre les pratiques envisagées et les exigences réglementaires, identification des non-conformités potentielles.\n4. **Plan de mise en conformité** : actions correctrices priorisées, responsables, délais indicatifs.\n5. **Risques juridiques et contractuels** : exposition aux sanctions, responsabilités contractuelles envers les clients/partenaires.\n6. **Documentation réglementaire requise** : liste des livrables obligatoires (politiques, contrats DPA, registres, rapports d'audit).\n\nSois précis sur les obligations légalement contraignantes vs les bonnes pratiques recommandées. Contextualise selon le secteur du projet."
+    },
+    {
+      "number": 8,
+      "title": "SecOps & Surveillance",
+      "short_title": "SecOps",
+      "icon": "🛡️",
+      "prompt": "Tu es un expert en sécurité des systèmes d'information (RSSI / consultant sécurité senior).\n\n## Projet analysé\nNom : {project_name}\nDescription : {project_desc}\n\n## Contexte des étapes précédentes\n{previous_steps_context}\n\n## Ta mission — Étape 8 : SecOps & Surveillance\n\nDéfinis le dispositif opérationnel de sécurité (SecOps) du projet :\n\n1. **Stratégie de journalisation** : events à collecter (authentification, accès, erreurs, changements de configuration), format standardisé (CEF, JSON, Syslog), rétention et intégrité des logs.\n2. **Surveillance et détection** : cas d'usage SIEM prioritaires, règles de détection recommandées, corrélation d'événements, indicateurs de compromission (IoC) à surveiller.\n3. **Gestion des incidents** : processus de réponse aux incidents (détection → qualification → confinement → éradication → reprise → retour d'expérience), SLA de réponse, chaîne d'escalade.\n4. **Gestion des vulnérabilités** : processus de veille (CVE, CERT, éditeurs), scan de vulnérabilités récurrent, priorisation (CVSS + contexte), SLA de correction par criticité.\n5. **Patch management** : politique de mise à jour, gestion des fenêtres de maintenance, gestion des exceptions et compensatoires.\n6. **Threat Intelligence** : sources de renseignement sur les menaces pertinentes pour le secteur, intégration dans les outils de détection.\n7. **Continuité et résilience** : PCA/PRA, tests de continuité, RTO/RPO cibles, gestion des sauvegardes sécurisées.\n\nPropose un tableau de bord de métriques SecOps (KPIs) adapté au projet."
+    },
+    {
+      "number": 9,
+      "title": "Stratégie de Tests",
+      "short_title": "Tests",
+      "icon": "🧪",
+      "prompt": "Tu es un expert en sécurité des systèmes d'information (RSSI / consultant sécurité senior).\n\n## Projet analysé\nNom : {project_name}\nDescription : {project_desc}\n\n## Contexte des étapes précédentes\n{previous_steps_context}\n\n## Ta mission — Étape 9 : Stratégie de tests de sécurité\n\nDéfinis la stratégie complète de tests de sécurité pour le projet :\n\n1. **Tests dans le cycle de développement (Shift Left)** :\n   - SAST (analyse statique) : outils recommandés, intégration CI/CD, seuils de blocage\n   - SCA (Software Composition Analysis) : gestion des dépendances tierces et CVE\n   - Secrets scanning : détection de credentials dans le code\n   - Code review sécurité : critères et grille d'évaluation\n\n2. **Tests dynamiques** :\n   - DAST (analyse dynamique) : périmètre, fréquence, outils\n   - Tests de fuzzing si applicables\n   - Tests d'intrusion (pentest) : périmètre recommandé, fréquence, type (boîte noire/grise/blanche)\n\n3. **Tests d'infrastructure** :\n   - Audit de configuration (hardening), scan de vulnérabilités réseau\n   - Tests de firewall et segmentation réseau\n\n4. **Tests applicatifs spécifiques** :\n   - Tests OWASP Top 10 / API Top 10\n   - Tests d'authentification et de contrôle d'accès\n   - Tests de gestion des sessions et des tokens\n\n5. **Red Team / Purple Team** : pertinence pour ce projet, périmètre, fréquence recommandée.\n\n6. **Critères de go/no-go sécurité** : conditions de validation avant mise en production, niveaux de sévérité acceptables.\n\n7. **Plan de tests** : tableau récapitulatif avec type de test, phase projet, responsable, fréquence, outils."
+    },
+    {
+      "number": 10,
+      "title": "Synthèse & Avis de Sécurité",
+      "short_title": "Synthèse",
+      "icon": "📊",
+      "prompt": "Tu es un expert en sécurité des systèmes d'information (RSSI / consultant sécurité senior).\n\n## Projet analysé\nNom : {project_name}\nDescription : {project_desc}\n\n## Contexte complet du cadrage (étapes 1 à 9)\n{previous_steps_context}\n\n## Ta mission — Étape 10 : Synthèse & Avis de sécurité\n\nProduis la synthèse finale du cadrage sécurité et formule ton avis de sécurité :\n\n1. **Tableau de bord du risque global** : synthèse visuelle (tableau) des risques identifiés par domaine (données, architecture, IAM, conformité, SecOps), avec niveau de risque résiduel (Critique / Élevé / Moyen / Faible).\n\n2. **Top 10 des risques prioritaires** : risques les plus critiques tous domaines confondus, avec pour chacun :\n   - Description du risque\n   - Impact potentiel\n   - Probabilité\n   - Mesures de mitigation recommandées\n   - Responsable suggéré\n\n3. **Feuille de route sécurité** : plan d'actions priorisé sur 3 horizons temporels :\n   - Court terme (avant mise en production)\n   - Moyen terme (6 premiers mois)\n   - Long terme (évolution continue)\n\n4. **Points bloquants** : liste des éléments qui, en l'état, s'opposent à une mise en production sécurisée.\n\n5. **Avis de sécurité formel** : position claire du consultant sur la maturité sécurité du projet :\n   - Niveau de maturité actuel (1 à 5)\n   - Recommandation (Favorable / Favorable avec réserves / Défavorable)\n   - Conditions suspensives si applicable\n\n6. **Prochaines étapes recommandées** : actions concrètes pour faire avancer le projet vers une posture de sécurité acceptable.\n\nSois direct, concis et opérationnel. Ce document doit pouvoir être présenté à un COMEX ou à la DSI."
+    }
+  ]
+}
