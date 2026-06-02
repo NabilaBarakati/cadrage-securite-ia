@@ -4,3 +4,4 @@ pydantic>=2.0
 bcrypt==4.1.2
 nest_asyncio
 python-docx
+reportlab
