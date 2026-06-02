@@ -351,13 +351,15 @@ def _render_home_dashboard() -> None:
     c1, c2, c3, c4 = st.columns(4)
     with c1:
         st.metric("🔵 Projets en cours", d["in_progress"])
-        if not demo_mode and st.button("Voir les projets →", key="kpi_inprogress", use_container_width=True):
+        if not demo_mode and st.button("Voir →", key="kpi_inprogress", use_container_width=True):
             st.session_state.current_page = "projects"
+            st.session_state.projects_status_filter = "IN_PROGRESS"
             st.rerun()
     with c2:
         st.metric("✅ Projets terminés", d["completed"])
-        if not demo_mode and st.button("Voir les projets →", key="kpi_completed", use_container_width=True):
+        if not demo_mode and st.button("Voir →", key="kpi_completed", use_container_width=True):
             st.session_state.current_page = "projects"
+            st.session_state.projects_status_filter = "COMPLETED"
             st.rerun()
     with c3:
         st.metric("⚠️ Risques identifiés", d["risks"])
@@ -462,11 +464,27 @@ def _render_project_selection() -> None:
 
     with col_list:
         st.subheader("Projets existants")
+
+        # Status filter (pre-filled if coming from a KPI card)
+        status_options = {"Tous": None, "🔵 En cours": "IN_PROGRESS", "🟢 Terminés": "COMPLETED", "🟡 Brouillon": "DRAFT"}
+        default_filter = st.session_state.pop("projects_status_filter", None)
+        default_index = list(status_options.values()).index(default_filter) if default_filter in status_options.values() else 0
+        selected_label = st.selectbox(
+            "Filtrer par statut",
+            options=list(status_options.keys()),
+            index=default_index,
+            key="projects_filter_select",
+        )
+        status_filter = status_options[selected_label]
+
         # VIEWER and ADMIN see all projects; CREATOR sees only their own.
         if user["role"] == "CREATOR":
             sessions = db_manager.get_sessions(created_by=user["id"])
         else:
             sessions = db_manager.get_sessions()
+
+        if status_filter:
+            sessions = [s for s in sessions if s["status"] == status_filter]
 
         if not sessions:
             msg = (
@@ -486,8 +504,8 @@ def _render_project_selection() -> None:
                     if s.get("project_desc"):
                         preview = s["project_desc"][:120]
                         st.markdown(preview + ("…" if len(s["project_desc"]) > 120 else ""))
-                    btn_label = "Voir →" if is_viewer else "Ouvrir →"
-                    if st.button(btn_label, key=f"open_{s['id']}", use_container_width=True):
+                    btn_label = "👁 Voir" if is_viewer else "📂 Ouvrir"
+                    if st.button(btn_label, key=f"open_{s['id']}", use_container_width=True, type="primary"):
                         st.session_state.session = s
                         st.rerun()
 
