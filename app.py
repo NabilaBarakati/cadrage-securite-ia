@@ -1,16 +1,12 @@
 import asyncio
+import nest_asyncio
+nest_asyncio.apply()
 
 import streamlit as st
 from database.db_manager import init_db
 from views.auth import render_login
 from views.admin import render_admin
 from views.dashboard import render_dashboard
-
-# Streamlit Cloud runs in a thread without an event loop; patch before any IO.
-try:
-    asyncio.get_event_loop()
-except RuntimeError:
-    asyncio.set_event_loop(asyncio.new_event_loop())
 
 st.set_page_config(
     page_title="Cadrage Sécurité IA",
