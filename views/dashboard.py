@@ -506,7 +506,7 @@ def _render_project_selection() -> None:
                         st.markdown(preview + ("…" if len(s["project_desc"]) > 120 else ""))
                     btn_label = "👁 Voir" if is_viewer else "📂 Ouvrir"
                     if st.button(btn_label, key=f"open_{s['id']}", use_container_width=True, type="primary"):
-                        st.session_state.session = s
+                        st.session_state.session = db_manager.get_session(s["id"])
                         st.rerun()
 
 

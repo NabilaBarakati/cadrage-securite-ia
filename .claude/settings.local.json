@@ -5,7 +5,11 @@
       "Bash(pip install *)",
       "Bash(pip3 install *)",
       "Bash(python3 *)",
-      "Bash(python *)"
+      "Bash(python *)",
+      "Bash(streamlit run *)",
+      "Bash(echo \"PID=$!\")",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)"
     ]
   }
 }
