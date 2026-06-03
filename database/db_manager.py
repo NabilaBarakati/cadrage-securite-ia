@@ -1,3 +1,4 @@
+import os
 import sqlite3
 import bcrypt
 from pathlib import Path
@@ -5,7 +6,8 @@ from contextlib import contextmanager
 from enum import Enum
 from typing import Dict, List, Optional
 
-DB_PATH = Path(__file__).parent / "app.db"
+_HERE = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(_HERE, "..", "database.db")
 
 
 class Role(str, Enum):

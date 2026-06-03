@@ -3,10 +3,6 @@ import nest_asyncio
 nest_asyncio.apply()
 
 import streamlit as st
-from database.db_manager import init_db
-from views.auth import render_login
-from views.admin import render_admin
-from views.dashboard import render_dashboard
 
 st.set_page_config(
     page_title="Cadrage Sécurité IA",
@@ -14,6 +10,11 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded",
 )
+
+from database.db_manager import init_db
+from views.auth import render_login
+from views.admin import render_admin
+from views.dashboard import render_dashboard
 
 st.markdown(
     """
@@ -29,7 +30,11 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-init_db()
+try:
+    init_db()
+except Exception as e:
+    st.error(f"Erreur lors de l'initialisation de la base de données : {e}")
+    st.stop()
 
 if "user" not in st.session_state:
     render_login()
